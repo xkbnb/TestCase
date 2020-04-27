@@ -169,7 +169,6 @@ public class FileServiceImpl implements FileService {
 		return true;
 	}
 
-	// TODO
 	@Override
 	public List<String> matchCase(List<String> list, ArrayList[] arrayList) {
 		// 当前正交表中有三种情况：

@@ -3,10 +3,13 @@ package com.xkb.windows;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -15,9 +18,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.xkb.controller.FileController;
 
 @SuppressWarnings("serial")
 public class MyJfame extends JFrame {
@@ -30,7 +36,7 @@ public class MyJfame extends JFrame {
 	public MyJfame() {
 		final JFrame jf = new JFrame("正交表测试用例");
 
-		jf.setSize(650, 400);
+		jf.setSize(650, 800);
 		jf.setLocationRelativeTo(null);
 		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -113,16 +119,32 @@ public class MyJfame extends JFrame {
 		jPanel.add(resultButton);
 		resultButton.setBounds(505, 210, 100, 30);
 
+		JLabel testCaseJLabel = new JLabel("测试用例：");
+		testCaseJLabel.setFont(new Font("微软雅黑", Font.BOLD, 15));
+		jPanel.add(testCaseJLabel);
+		testCaseJLabel.setBounds(10, 250, 130, 30);
+
+		// 识别结果框
+		JTextArea testCaseArea = new JTextArea();
+//		testCaseArea.setLineWrap(true); // 自动换行
+		testCaseArea.setFont(new Font(null, Font.PLAIN, 18)); // 设置字体
+		testCaseArea.setEditable(false);
+
+		ScrollPane sp = new ScrollPane(); // 设置滚动条
+		sp.add(testCaseArea);
+		sp.setBounds(10, 280, 600, 300);
+		jPanel.add(sp);
+
 		// 写入Excel按钮
 		JButton excelButton = new JButton("结果写入Excel");
 		excelButton.setFont(new Font("微软雅黑", Font.BOLD, 18));
 		jPanel.add(excelButton);
-		excelButton.setBounds(100, 300, 200, 30);
+		excelButton.setBounds(100, 600, 200, 30);
 
 		excelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				clickEvent(e, jf, numText, resultFileUrlField, "xlsx");
+				clickEvent(e, jf, numText, resultFileUrlField, testCaseArea, "xlsx");
 			}
 		});
 
@@ -130,12 +152,12 @@ public class MyJfame extends JFrame {
 		JButton startButton = new JButton("结果写入txt");
 		startButton.setFont(new Font("微软雅黑", Font.BOLD, 18));
 		jPanel.add(startButton);
-		startButton.setBounds(340, 300, 200, 30);
+		startButton.setBounds(340, 600, 200, 30);
 
 		startButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				clickEvent(e, jf, numText, resultFileUrlField, "txt");
+				clickEvent(e, jf, numText, resultFileUrlField, testCaseArea, "txt");
 			}
 		});
 		jf.setContentPane(jPanel);
@@ -174,7 +196,7 @@ public class MyJfame extends JFrame {
 	 * 抽取点击事件里的方法
 	 */
 	private void clickEvent(ActionEvent e, JFrame jf, JTextField numText, JTextField resultFileUrlField,
-			String method) {
+			JTextArea testCaseArea, String method) {
 		inputString = numText.getText().trim();
 
 		if (exportFileUrl.contains("\\ResultCase.")) { // 点击存入excel后再点击存入txt的情况
@@ -192,13 +214,14 @@ public class MyJfame extends JFrame {
 		} else {
 			Map<Integer, String> resultMap = com.xkb.controller.FileController.TestCase(inputString, caseFileUrl,
 					tableFileUrl, exportFileUrl, method);
-			showResult(jf, resultMap);
+			showResult(jf, testCaseArea, resultMap);
 		}
 	}
 
-	public void showResult(JFrame jf, Map<Integer, String> resultMap) {
+	public void showResult(JFrame jf, JTextArea testCaseArea, Map<Integer, String> resultMap) {
 		switch (resultMap.get(0)) {
 		case "求解测试用例并写入文件成功":
+			showTestCase(testCaseArea);
 			JOptionPane.showMessageDialog(jf, resultMap.get(0), "成功", JOptionPane.INFORMATION_MESSAGE);
 			break;
 		case "OtherStrings":
@@ -208,22 +231,26 @@ public class MyJfame extends JFrame {
 			JOptionPane.showMessageDialog(jf, "输入的正交数有误，请重新输入", "警告", JOptionPane.WARNING_MESSAGE);
 			break;
 		case "正交表文件不存在":
-			JOptionPane.showMessageDialog(jf, "正交表文件不存在，请重新选择", "警告", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(jf, resultMap.get(0) + "，请重新选择", "警告", JOptionPane.WARNING_MESSAGE);
 			break;
 		case "样例文件不存在":
-			JOptionPane.showMessageDialog(jf, "样例文件不存在，请重新选择", "警告", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(jf, resultMap.get(0) + "，请重新选择", "警告", JOptionPane.WARNING_MESSAGE);
 			break;
 		case "正交表中没有与之对应的测试用例！":
-			JOptionPane.showMessageDialog(jf, "正交表中没有与之对应的测试用例！", "警告", JOptionPane.WARNING_MESSAGE);
-			break;
 		case "样例文件和输入的正交数不对应！":
-			JOptionPane.showMessageDialog(jf, "样例文件和输入的正交数不对应！", "警告", JOptionPane.WARNING_MESSAGE);
-			break;
 		case "测试用例写入文件失败":
-			JOptionPane.showMessageDialog(jf, "测试用例写入文件失败", "警告", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(jf, resultMap.get(0), "警告", JOptionPane.WARNING_MESSAGE);
 			break;
 		default:
 			break;
+		}
+	}
+	
+	public void showTestCase(JTextArea testCaseArea) {
+		testCaseArea.setText("");   //第二次使用时清空上一次的
+		List<String> testcase = FileController.ReturnTestCase();
+		for (int i = 0; i < testcase.size(); i++) { // 第一行标题
+			testCaseArea.append(testcase.get(i)+"\n");
 		}
 	}
 

@@ -11,7 +11,7 @@ public interface FileService {
 	 * 
 	 * @param file     正交表文件
 	 * @param inputMap 输入的水平数和因子
-	 * @return 存储对应正交表的list,list第一个数为测试用例的个数
+	 * @return 存储对应正交表的list集合,list第一个数为测试用例的个数
 	 */
 	public List<String> readTableFile(File file, Map<Integer, String> inputMap);
 
@@ -19,7 +19,7 @@ public interface FileService {
 	 * 读取样例文件
 	 * 
 	 * @param file 样例文件
-	 * @return 存储样例的二维list，list的每个一维list数组的第一个为水平数的类型,以服务器： IIS Apache
+	 * @return 存储样例的二维list集合，list的每个一维list数组的第一个为水平数的类型,以服务器： IIS Apache
 	 *         Jetty为例，第一个为服务器
 	 */
 	public ArrayList[] readCaseFile(File file);
