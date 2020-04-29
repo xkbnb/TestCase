@@ -171,7 +171,7 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public List<String> matchCase(List<String> list, ArrayList[] arrayList) {
-		// 当前正交表中有四种情况：
+		// 当前正交表中有四种情况（后续可加或改用另一种方案）：
 		// 第一种为正交表的一行数据的长度等于因子数的总和，即每个数代表对应因子里面的水平数
 		// 第二种为正交表的一行数据的长度 比因子数总和多1(多了一个空格或一位数字，留给其中一个的水平数>10的数做占位符(如"
 		// 8")或大于10的水平数(如"12")

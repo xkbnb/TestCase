@@ -170,7 +170,7 @@ public class MyJfame extends JFrame {
 	private static String showFileOpenDialog(Component parent, JTextField urlTextField, int n) {
 		JFileChooser chooser = new JFileChooser(); // 文件选择器
 		String path = null;
-		chooser.setCurrentDirectory(new File("D:\\软件测试\\工具开发")); // 设置默认显示的文件夹
+		chooser.setCurrentDirectory(new File("..")); // 设置默认显示的文件夹
 		if (n == 0) {
 			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY); // 设置只选文件
 		} else {
@@ -213,6 +213,7 @@ public class MyJfame extends JFrame {
 		} else if (caseFileUrl == null || tableFileUrl == null) {
 			JOptionPane.showMessageDialog(jf, "未选择文件", "警告", JOptionPane.WARNING_MESSAGE);
 		} else {
+			//主程序入口
 			Map<Integer, String> resultMap = com.xkb.controller.FileController.TestCase(inputString, caseFileUrl,
 					tableFileUrl, exportFileUrl, method);
 			showResult(jf, testCaseArea, resultMap);
