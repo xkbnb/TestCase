@@ -47,6 +47,10 @@ public class FileController {
 			return resultMap;
 		}
 		testcase = fileService.matchCase(list, arrayList); // 测试用例
+		if(testcase.get(0).equals("error")) {
+			resultMap.put(0, "样例文件与正交表匹配出错");
+			return resultMap;
+		}
 		if (method.equals("txt")) {
 			if (!fileService.writeToTxt(exportFileUrl, arrayList, testcase)) { // 测试用例写入txt文件
 				resultMap.put(0, "测试用例写入文件失败");

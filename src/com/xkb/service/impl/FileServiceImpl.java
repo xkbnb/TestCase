@@ -171,13 +171,14 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public List<String> matchCase(List<String> list, ArrayList[] arrayList) {
-		// 当前正交表中有三种情况：
+		// 当前正交表中有四种情况：
 		// 第一种为正交表的一行数据的长度等于因子数的总和，即每个数代表对应因子里面的水平数
 		// 第二种为正交表的一行数据的长度 比因子数总和多1(多了一个空格或一位数字，留给其中一个的水平数>10的数做占位符(如"
 		// 8")或大于10的水平数(如"12")
 		// 这种情况下一般都是最后一位为" 5"或"12"这样的数
 		// 第三种为正交表的一行数据的长度是因子数的两倍
 		// 这种情况下没个因子里的水平数都占两位
+		// 第四种为正交表的一行数据的长度 比因子数总和多2(有一个正交数的水平数大于10且其因子数为2)
 		List<String> testCase = new ArrayList<String>();
 		int tableLength = list.get(1).length(); // 获取单行正交表的长度
 		int num = 0;
@@ -207,7 +208,7 @@ public class FileServiceImpl implements FileService {
 				testcaseString += arrayList[a.length - 2].get(num + 1);
 				testCase.add(testcaseString);
 			}
-		} else { // 第三种情况
+		} else if(tableLength == arrayList.length*2){ // 第三种情况
 			for (int i = 0; i < list.size() - 1; i++) {
 				String level = list.get(i + 1).toString();
 				int tmp = 0;
@@ -224,6 +225,30 @@ public class FileServiceImpl implements FileService {
 				}
 				testCase.add(testcaseString);
 			}
+		}else if(tableLength == arrayList.length+2){     //第四种情况
+			for (int i = 0; i < list.size() - 1; i++) {
+				String testcaseString = "";
+				char[] a = list.get(i + 1).toCharArray(); // 将正交表的一行转换为字符数组
+				for (int j = 0; j < a.length - 4; j++) { // 最后四位长度为两个水平数
+					num = Integer.parseInt(String.valueOf(a[j]));
+					testcaseString += arrayList[j].get(num + 1) + "\t";
+				}
+				if (Character.isSpace(a[a.length - 4])) {// 倒数第四个为空格，即" 8"的格式，直接取最后一个数
+					num = Integer.parseInt(String.valueOf(a[a.length - 3]));
+				} else { // 两位均为数字，则合并为一个数字
+					num = Integer.parseInt(String.valueOf(a[a.length - 4]) + String.valueOf(a[a.length - 3]));
+				}
+				testcaseString += arrayList[a.length - 4].get(num + 1) + "\t";
+				if (Character.isSpace(a[a.length - 2])) {// 倒数第二个为空格，即" 8"的格式，直接取最后一个数
+					num = Integer.parseInt(String.valueOf(a[a.length - 1]));
+				} else { // 倒数两位均为数字，则合并为一个数字
+					num = Integer.parseInt(String.valueOf(a[a.length - 2]) + String.valueOf(a[a.length - 1]));
+				}
+				testcaseString += arrayList[a.length - 3].get(num + 1);
+				testCase.add(testcaseString);
+			}
+		}else {
+			testCase.add("error");
 		}
 		return testCase;
 	}

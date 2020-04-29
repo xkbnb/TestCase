@@ -36,7 +36,7 @@ public class MyJfame extends JFrame {
 	public MyJfame() {
 		final JFrame jf = new JFrame("正交表测试用例");
 
-		jf.setSize(650, 800);
+		jf.setSize(650, 750);
 		jf.setLocationRelativeTo(null);
 		jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -198,6 +198,7 @@ public class MyJfame extends JFrame {
 	private void clickEvent(ActionEvent e, JFrame jf, JTextField numText, JTextField resultFileUrlField,
 			JTextArea testCaseArea, String method) {
 		inputString = numText.getText().trim();
+		testCaseArea.setText("");
 
 		if (exportFileUrl.contains("\\ResultCase.")) { // 点击存入excel后再点击存入txt的情况
 			int n = exportFileUrl.lastIndexOf("\\ResultCase.");
@@ -239,6 +240,7 @@ public class MyJfame extends JFrame {
 		case "正交表中没有与之对应的测试用例！":
 		case "样例文件和输入的正交数不对应！":
 		case "测试用例写入文件失败":
+		case "样例文件与正交表匹配出错":
 			JOptionPane.showMessageDialog(jf, resultMap.get(0), "警告", JOptionPane.WARNING_MESSAGE);
 			break;
 		default:
